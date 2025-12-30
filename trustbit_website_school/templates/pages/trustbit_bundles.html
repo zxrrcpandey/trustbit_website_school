@@ -1,0 +1,183 @@
+{%- extends "trustbit_website_school/templates/includes/trustbit_base.html" -%}
+
+{%- block title %}Product Bundles - {{ settings.store_name or "Trustbit Books & Stationery" }}{% endblock %}
+
+{%- block page_content %}
+<div class="kgs-page-container">
+    <!-- Page Header -->
+    <div class="kgs-page-header">
+        <h1>📦 Product Bundles</h1>
+        <p>Complete school book sets - Add all items with one click!</p>
+    </div>
+
+    <!-- Info Banner -->
+    <div class="kgs-info-banner kgs-glass">
+        <span>💡</span>
+        <div>
+            <strong>How Product Bundles Work</strong>
+            <p>Click "<strong style="color: #ea580c;">Add All</strong>" to add all available items to your cart. 
+            You can then <strong style="color: #059669;">edit quantities</strong>, 
+            <strong style="color: #dc2626;">remove items</strong> you don't need, or 
+            <strong style="color: #7c3aed;">add more items</strong> from the shop!</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="kgs-filters kgs-glass">
+        <div class="kgs-filter-group">
+            <label>School</label>
+            <select id="filter-school" onchange="filterBundles()">
+                <option value="">All Schools</option>
+                {% for school in schools %}
+                <option value="{{ school }}">{{ school }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="kgs-filter-group">
+            <label>Class</label>
+            <select id="filter-class" onchange="filterBundles()">
+                <option value="">All Classes</option>
+                {% for cls in classes %}
+                <option value="{{ cls }}">{{ cls }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="kgs-filter-group">
+            <label>Sort By</label>
+            <select id="filter-sort" onchange="filterBundles()">
+                <option value="name">Name (A-Z)</option>
+                <option value="price_low">Price (Low to High)</option>
+                <option value="price_high">Price (High to Low)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Bundle Grid -->
+    <div class="kgs-bundle-grid" id="bundle-grid">
+        {% for bundle in bundles %}
+        <div class="kgs-bundle-card kgs-glass" 
+             data-school="{{ bundle.school or '' }}"
+             data-class="{{ bundle.class or '' }}"
+             data-price="{{ bundle.price }}">
+            <!-- Header -->
+            <div class="kgs-bundle-header">
+                <div class="kgs-bundle-badges">
+                    <span class="kgs-bundle-badge">📦 {{ bundle.item_count }} Items</span>
+                    {% if bundle.availability.available_sets > 0 %}
+                    <span class="kgs-bundle-availability available">✓ {{ bundle.availability.available_sets }} sets available</span>
+                    {% else %}
+                    <span class="kgs-bundle-availability out-of-stock">✗ Out of Stock</span>
+                    {% endif %}
+                </div>
+                <div class="kgs-bundle-icon">
+                    {% if bundle.image %}
+                    <img src="{{ bundle.image }}" alt="{{ bundle.item_name }}">
+                    {% else %}
+                    📚
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="kgs-bundle-content">
+                {% if bundle.school %}
+                <span class="kgs-school-tag">{{ bundle.school }}{% if bundle.class %} • {{ bundle.class }}{% endif %}</span>
+                {% endif %}
+                
+                <h3>{{ bundle.item_name }}</h3>
+                <p>{{ bundle.description | truncate(100) if bundle.description else "Complete book set for this class" }}</p>
+                
+                {% set out_of_stock_count = bundle.items | selectattr('stock', 'le', 0) | list | length %}
+                {% if out_of_stock_count > 0 %}
+                <div class="kgs-warning-banner">
+                    ⚠️ {{ out_of_stock_count }} item(s) currently out of stock
+                </div>
+                {% endif %}
+                
+                <div class="kgs-price-box">
+                    <div class="kgs-price-label">Total Bundle Value</div>
+                    <div class="kgs-price-value">₹{{ bundle.price | int | format_number }}</div>
+                </div>
+                
+                <div class="kgs-bundle-actions">
+                    <button class="kgs-btn kgs-btn-outline kgs-preview-bundle-btn" 
+                            data-item-code="{{ bundle.item_code }}">
+                        👁️ Preview
+                    </button>
+                    <button class="kgs-btn kgs-btn-secondary kgs-add-bundle-btn" 
+                            data-item-code="{{ bundle.item_code }}"
+                            {% if bundle.availability.available_sets <= 0 %}disabled{% endif %}>
+                        🛒 Add All
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="kgs-empty-state kgs-glass">
+            <span>📦</span>
+            <h3>No bundles found</h3>
+            <p>Try adjusting your filters</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="kgs-pagination">
+        {% if page > 1 %}
+        <a href="?page={{ page - 1 }}" class="kgs-btn kgs-btn-outline">← Previous</a>
+        {% endif %}
+        
+        <span class="kgs-page-info">Page {{ page }} of {{ total_pages }}</span>
+        
+        {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}" class="kgs-btn kgs-btn-outline">Next →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Bundle Preview Modal Container -->
+<div id="bundle-modal-container"></div>
+
+<script>
+function filterBundles() {
+    var school = document.getElementById('filter-school').value;
+    var cls = document.getElementById('filter-class').value;
+    var sort = document.getElementById('filter-sort').value;
+    
+    var cards = document.querySelectorAll('.kgs-bundle-card');
+    var cardsArray = Array.from(cards);
+    
+    // Filter
+    cardsArray.forEach(function(card) {
+        var cardSchool = card.dataset.school;
+        var cardClass = card.dataset.class;
+        var show = true;
+        
+        if (school && cardSchool !== school) show = false;
+        if (cls && cardClass !== cls) show = false;
+        
+        card.style.display = show ? 'block' : 'none';
+    });
+    
+    // Sort visible cards
+    var grid = document.getElementById('bundle-grid');
+    var visibleCards = cardsArray.filter(c => c.style.display !== 'none');
+    
+    visibleCards.sort(function(a, b) {
+        if (sort === 'price_low') {
+            return parseInt(a.dataset.price) - parseInt(b.dataset.price);
+        } else if (sort === 'price_high') {
+            return parseInt(b.dataset.price) - parseInt(a.dataset.price);
+        } else {
+            return a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent);
+        }
+    });
+    
+    visibleCards.forEach(function(card) {
+        grid.appendChild(card);
+    });
+}
+</script>
+{% endblock %}

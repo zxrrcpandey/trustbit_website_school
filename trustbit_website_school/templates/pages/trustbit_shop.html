@@ -1,0 +1,180 @@
+{%- extends "trustbit_website_school/templates/includes/trustbit_base.html" -%}
+
+{%- block title %}{{ settings.store_name or "Trustbit Books & Stationery" }} - Your Complete School Shop{% endblock %}
+
+{%- block page_content %}
+<!-- Hero Section -->
+<section class="kgs-hero">
+    <div class="kgs-hero-content">
+        <div class="kgs-hero-text">
+            {% if settings.sale_banner_active and settings.sale_banner_text %}
+            <span class="kgs-sale-badge">{{ settings.sale_banner_text }}</span>
+            {% endif %}
+            
+            <h1>{{ settings.hero_title or "Everything Your Child Needs for School" }}</h1>
+            <p>{{ settings.hero_subtitle or "Books, stationery, bags & complete school bundles. Shop from 25,000+ products with fast delivery!" }}</p>
+            
+            <div class="kgs-hero-actions">
+                <a href="{{ settings.hero_button_link or '/shop/bundles' }}" class="kgs-btn kgs-btn-secondary">
+                    📦 {{ settings.hero_button_text or "Shop Bundles" }}
+                </a>
+                <a href="/shop/categories" class="kgs-btn kgs-btn-white">
+                    Browse Categories
+                </a>
+            </div>
+        </div>
+        
+        <div class="kgs-hero-card kgs-glass">
+            {% if settings.hero_image %}
+            <img src="{{ settings.hero_image }}" alt="Trustbit Books">
+            {% else %}
+            <div class="kgs-hero-icon">📚</div>
+            {% endif %}
+            <div class="kgs-hero-stats">
+                <div class="kgs-hero-stat-main">{{ stats.total_products | default("25,000+") }}</div>
+                <div class="kgs-hero-stat-label">Products Available</div>
+            </div>
+            <div class="kgs-hero-mini-stats">
+                <div>
+                    <strong>{{ stats.total_bundles | default("150+") }}</strong>
+                    <span>School Bundles</span>
+                </div>
+                <div>
+                    <strong>{{ settings.total_schools_served | default("50+") }}</strong>
+                    <span>Schools Covered</span>
+                </div>
+                <div>
+                    <strong>10K+</strong>
+                    <span>Happy Parents</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="kgs-section">
+    <div class="kgs-section-header">
+        <div>
+            <h2>Shop by Category</h2>
+            <p>Find exactly what you need</p>
+        </div>
+        <a href="/shop/categories" class="kgs-btn kgs-btn-outline">View All →</a>
+    </div>
+    
+    <div class="kgs-category-grid">
+        {% for cat in categories %}
+        <div class="kgs-category-card kgs-glass" data-category="{{ cat.name }}">
+            <div class="kgs-category-icon" style="background: linear-gradient(135deg, {{ cat.trustbit_color or '#7c3aed' }}30, {{ cat.trustbit_color or '#7c3aed' }}10);">
+                {{ cat.trustbit_icon or "📦" }}
+            </div>
+            <h4>{{ cat.item_group_name }}</h4>
+            <span class="kgs-category-count">{{ cat.count | default(0) }} items</span>
+        </div>
+        {% else %}
+        <p style="color: rgba(255,255,255,0.7);">No categories found</p>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Latest Products Section -->
+{% if latest_products %}
+<section class="kgs-section">
+    <div class="kgs-section-header">
+        <div>
+            <h2>🆕 Latest Arrivals</h2>
+            <p>Fresh stock just in</p>
+        </div>
+    </div>
+    
+    <div class="kgs-product-grid">
+        {% for product in latest_products %}
+        <div class="kgs-product-card kgs-glass">
+            <span class="kgs-product-tag">New Arrival</span>
+            <div class="kgs-product-image">
+                {% if product.image %}
+                <img src="{{ product.image }}" alt="{{ product.item_name }}">
+                {% else %}
+                📦
+                {% endif %}
+            </div>
+            <h4>{{ product.item_name }}</h4>
+            <div class="kgs-product-meta">
+                <span class="kgs-product-price">₹{{ product.price | int }}</span>
+                <span class="kgs-stock-badge {{ 'in-stock' if product.stock > 0 else 'out-of-stock' }}">
+                    {% if product.stock > 0 %}{{ product.stock }} in stock{% else %}Out of Stock{% endif %}
+                </span>
+            </div>
+            <button class="kgs-btn kgs-btn-primary kgs-add-item-btn" 
+                    data-item-code="{{ product.item_code }}"
+                    {% if product.stock <= 0 %}disabled{% endif %}>
+                {% if product.stock > 0 %}+ Add to Cart{% else %}Out of Stock{% endif %}
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Trending Products Section -->
+{% if trending_products %}
+<section class="kgs-section">
+    <div class="kgs-section-header">
+        <div>
+            <h2>🔥 Trending Now</h2>
+            <p>Most popular this week</p>
+        </div>
+    </div>
+    
+    <div class="kgs-product-grid">
+        {% for product in trending_products %}
+        <div class="kgs-product-card kgs-glass">
+            <div class="kgs-product-image">
+                {% if product.image %}
+                <img src="{{ product.image }}" alt="{{ product.item_name }}">
+                {% else %}
+                📦
+                {% endif %}
+            </div>
+            <h4>{{ product.item_name }}</h4>
+            <div class="kgs-product-meta">
+                <span class="kgs-product-price">₹{{ product.price | int }}</span>
+                <span class="kgs-sales-count">🔥 {{ product.sales }} sold</span>
+            </div>
+            <button class="kgs-btn kgs-btn-primary kgs-add-item-btn" 
+                    data-item-code="{{ product.item_code }}"
+                    {% if product.stock <= 0 %}disabled{% endif %}>
+                {% if product.stock > 0 %}+ Add to Cart{% else %}Out of Stock{% endif %}
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<!-- Features Section -->
+<section class="kgs-section">
+    <div class="kgs-features kgs-glass">
+        <div class="kgs-feature">
+            <span>🚚</span>
+            <h4>Free Delivery</h4>
+            <p>On orders above ₹500</p>
+        </div>
+        <div class="kgs-feature">
+            <span>✅</span>
+            <h4>Quality Products</h4>
+            <p>Genuine & authentic items</p>
+        </div>
+        <div class="kgs-feature">
+            <span>↩️</span>
+            <h4>Easy Returns</h4>
+            <p>7 day return policy</p>
+        </div>
+        <div class="kgs-feature">
+            <span>💳</span>
+            <h4>Secure Payment</h4>
+            <p>Multiple payment options</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

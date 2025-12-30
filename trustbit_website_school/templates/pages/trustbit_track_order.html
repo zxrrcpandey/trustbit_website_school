@@ -1,0 +1,494 @@
+{%- extends "trustbit_website_school/templates/includes/trustbit_base.html" -%}
+
+{%- block title %}Track Order - {{ settings.store_name or "Trustbit Books & Stationery" }}{% endblock %}
+
+{%- block page_content %}
+<div class="kgs-page-container">
+    <!-- Page Header -->
+    <div class="kgs-page-header">
+        <h1>📍 Track Your Order</h1>
+        <p>Enter your Order ID to track shipment status</p>
+    </div>
+
+    <!-- Search Box -->
+    <div class="kgs-track-search kgs-glass">
+        <form id="track-form" onsubmit="trackOrder(event)">
+            <div class="kgs-track-input-group">
+                <span class="kgs-track-icon">🔍</span>
+                <input type="text" id="order-id-input" 
+                       value="{{ order_id or '' }}" 
+                       placeholder="Enter Order ID (e.g., SAL-ORD-2024-00001)" 
+                       required>
+                <button type="submit" class="kgs-btn kgs-btn-primary">Track</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Order Result -->
+    <div id="order-result">
+        {% if order %}
+        <div class="kgs-order-tracking kgs-glass">
+            <!-- Order Summary -->
+            <div class="kgs-tracking-header">
+                <div class="kgs-tracking-order-info">
+                    <span class="kgs-tracking-label">Order ID</span>
+                    <span class="kgs-tracking-order-id">{{ order.id }}</span>
+                </div>
+                <div class="kgs-tracking-order-info">
+                    <span class="kgs-tracking-label">Order Date</span>
+                    <span>{{ order.date }}</span>
+                </div>
+                <div class="kgs-tracking-order-info">
+                    <span class="kgs-tracking-label">Items</span>
+                    <span>{{ order.items_count }} items</span>
+                </div>
+                <div class="kgs-tracking-order-info">
+                    <span class="kgs-tracking-label">Total</span>
+                    <span class="kgs-tracking-total">₹{{ order.total | int | format_number }}</span>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="kgs-tracking-timeline">
+                <h3>📦 Shipment Progress</h3>
+                <div class="kgs-timeline">
+                    {% for step in timeline %}
+                    <div class="kgs-timeline-step {{ 'done' if step.done else 'pending' }}">
+                        <div class="kgs-timeline-marker">
+                            {% if step.done %}✓{% else %}{{ loop.index }}{% endif %}
+                        </div>
+                        <div class="kgs-timeline-content">
+                            <span class="kgs-timeline-title">{{ step.step }}</span>
+                            {% if step.date %}
+                            <span class="kgs-timeline-date">{{ step.date }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Current Status -->
+            <div class="kgs-current-status">
+                <div class="kgs-status-card {{ order.status | lower | replace(' ', '-') }}">
+                    {% if order.delivery_status == 'Fully Delivered' or order.status in ['Completed', 'Closed'] %}
+                    <span class="kgs-status-icon">✅</span>
+                    <div class="kgs-status-text">
+                        <h4>Order Delivered!</h4>
+                        <p>Your order has been successfully delivered.</p>
+                    </div>
+                    {% elif order.delivery_status == 'Partially Delivered' %}
+                    <span class="kgs-status-icon">🚚</span>
+                    <div class="kgs-status-text">
+                        <h4>Partially Shipped</h4>
+                        <p>Some items from your order are on the way.</p>
+                    </div>
+                    {% elif order.status in ['To Deliver and Bill', 'To Deliver'] %}
+                    <span class="kgs-status-icon">🚚</span>
+                    <div class="kgs-status-text">
+                        <h4>Order Shipped!</h4>
+                        <p>Your order is on the way.</p>
+                    </div>
+                    {% else %}
+                    <span class="kgs-status-icon">⏳</span>
+                    <div class="kgs-status-text">
+                        <h4>Order Processing</h4>
+                        <p>Your order is being prepared.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Delivery Info -->
+            {% if delivery %}
+            <div class="kgs-delivery-info">
+                <h3>🚛 Delivery Details</h3>
+                <div class="kgs-delivery-grid">
+                    {% if delivery.transporter_name %}
+                    <div class="kgs-delivery-item">
+                        <span class="kgs-delivery-label">Courier</span>
+                        <span class="kgs-delivery-value">{{ delivery.transporter_name }}</span>
+                    </div>
+                    {% endif %}
+                    {% if delivery.lr_no %}
+                    <div class="kgs-delivery-item">
+                        <span class="kgs-delivery-label">Tracking ID</span>
+                        <span class="kgs-delivery-value kgs-tracking-id">{{ delivery.lr_no }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% elif order_id and not order %}
+        <!-- Not Found -->
+        <div class="kgs-not-found kgs-glass">
+            <span>❌</span>
+            <h3>Order Not Found</h3>
+            <p>We couldn't find an order with ID: <strong>{{ order_id }}</strong></p>
+            <p>Please check the Order ID and try again.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Help Section -->
+    <div class="kgs-track-help kgs-glass">
+        <h3>Need Help?</h3>
+        <p>If you have questions about your order, contact us:</p>
+        <div class="kgs-help-options">
+            <a href="tel:{{ settings.phone or '+919876543210' }}" class="kgs-help-option">
+                <span>📞</span>
+                <div>
+                    <strong>Call Us</strong>
+                    <p>{{ settings.phone or "+91 98765 43210" }}</p>
+                </div>
+            </a>
+            <a href="https://wa.me/{{ (settings.whatsapp or '919876543210') | replace(' ', '') | replace('+', '') }}" target="_blank" class="kgs-help-option">
+                <span>💬</span>
+                <div>
+                    <strong>WhatsApp</strong>
+                    <p>Quick support</p>
+                </div>
+            </a>
+            <a href="/shop/contact" class="kgs-help-option">
+                <span>✉️</span>
+                <div>
+                    <strong>Contact Form</strong>
+                    <p>Send us a message</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.kgs-track-search {
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.kgs-track-input-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 600px;
+    margin: 0 auto;
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 8px 8px 8px 20px;
+}
+
+.kgs-track-icon {
+    font-size: 20px;
+}
+
+.kgs-track-input-group input {
+    flex: 1;
+    border: none;
+    font-size: 16px;
+    padding: 8px;
+}
+
+.kgs-track-input-group input:focus {
+    outline: none;
+}
+
+.kgs-order-tracking {
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.kgs-tracking-header {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 30px;
+}
+
+.kgs-tracking-order-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.kgs-tracking-label {
+    font-size: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.kgs-tracking-order-id {
+    font-family: monospace;
+    font-weight: 700;
+    color: #7c3aed;
+    font-size: 15px;
+}
+
+.kgs-tracking-total {
+    font-size: 20px;
+    font-weight: 800;
+    color: #7c3aed;
+}
+
+.kgs-tracking-timeline {
+    margin-bottom: 30px;
+}
+
+.kgs-tracking-timeline h3 {
+    margin: 0 0 20px 0;
+    color: #0f172a;
+}
+
+.kgs-timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+}
+
+.kgs-timeline::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    right: 30px;
+    height: 4px;
+    background: #e5e7eb;
+    z-index: 0;
+}
+
+.kgs-timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+
+.kgs-timeline-marker {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.kgs-timeline-step.done .kgs-timeline-marker {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
+}
+
+.kgs-timeline-content {
+    text-align: center;
+}
+
+.kgs-timeline-title {
+    display: block;
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+}
+
+.kgs-timeline-date {
+    display: block;
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.kgs-current-status {
+    margin-bottom: 30px;
+}
+
+.kgs-status-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px;
+    border-radius: 16px;
+    background: #f0fdf4;
+}
+
+.kgs-status-card.to-deliver,
+.kgs-status-card.to-deliver-and-bill {
+    background: #eff6ff;
+}
+
+.kgs-status-card.to-bill,
+.kgs-status-card.draft {
+    background: #fffbeb;
+}
+
+.kgs-status-icon {
+    font-size: 40px;
+}
+
+.kgs-status-text h4 {
+    margin: 0 0 4px 0;
+    color: #0f172a;
+}
+
+.kgs-status-text p {
+    margin: 0;
+    color: #64748b;
+}
+
+.kgs-delivery-info h3 {
+    margin: 0 0 16px 0;
+    color: #0f172a;
+}
+
+.kgs-delivery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.kgs-delivery-item {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 12px;
+}
+
+.kgs-delivery-label {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.kgs-delivery-value {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.kgs-tracking-id {
+    font-family: monospace;
+    color: #7c3aed;
+}
+
+.kgs-not-found {
+    text-align: center;
+    padding: 60px;
+}
+
+.kgs-not-found span {
+    font-size: 60px;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.kgs-not-found h3 {
+    margin: 0 0 8px 0;
+    color: #0f172a;
+}
+
+.kgs-not-found p {
+    margin: 0 0 8px 0;
+    color: #64748b;
+}
+
+.kgs-track-help {
+    padding: 30px;
+}
+
+.kgs-track-help h3 {
+    margin: 0 0 8px 0;
+    color: #0f172a;
+}
+
+.kgs-track-help > p {
+    margin: 0 0 20px 0;
+    color: #64748b;
+}
+
+.kgs-help-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.kgs-help-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.kgs-help-option:hover {
+    background: #7c3aed;
+    color: #fff;
+}
+
+.kgs-help-option:hover strong,
+.kgs-help-option:hover p {
+    color: #fff;
+}
+
+.kgs-help-option span {
+    font-size: 28px;
+}
+
+.kgs-help-option strong {
+    display: block;
+    color: #0f172a;
+}
+
+.kgs-help-option p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .kgs-tracking-header {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .kgs-timeline {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .kgs-timeline::before {
+        top: 0;
+        bottom: 0;
+        left: 20px;
+        width: 4px;
+        height: auto;
+    }
+    .kgs-timeline-step {
+        flex-direction: row;
+        gap: 16px;
+    }
+    .kgs-timeline-content {
+        text-align: left;
+    }
+    .kgs-help-options {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function trackOrder(e) {
+    e.preventDefault();
+    var orderId = document.getElementById('order-id-input').value.trim();
+    if (orderId) {
+        window.location.href = '/shop/track-order?order_id=' + encodeURIComponent(orderId);
+    }
+}
+</script>
+{% endblock %}

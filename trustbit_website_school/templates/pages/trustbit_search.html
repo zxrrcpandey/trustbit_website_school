@@ -1,0 +1,320 @@
+{%- extends "trustbit_website_school/templates/includes/trustbit_base.html" -%}
+
+{%- block title %}Search Results - {{ settings.store_name or "Trustbit Books & Stationery" }}{% endblock %}
+
+{%- block page_content %}
+<div class="kgs-page-container">
+    <!-- Search Header -->
+    <div class="kgs-search-header">
+        <h1>🔍 Search Results</h1>
+        {% if query %}
+        <p>Showing results for "<strong>{{ query }}</strong>"</p>
+        {% endif %}
+    </div>
+
+    <!-- Search Form -->
+    <div class="kgs-search-form-container kgs-glass">
+        <form action="/shop/search" method="GET" class="kgs-search-form">
+            <div class="kgs-search-input-wrapper">
+                <span>🔍</span>
+                <input type="text" name="q" value="{{ query or '' }}" placeholder="Search products, bundles, schools...">
+            </div>
+            <div class="kgs-search-filters">
+                <select name="type">
+                    <option value="">All Types</option>
+                    <option value="items" {% if type == 'items' %}selected{% endif %}>Products Only</option>
+                    <option value="bundles" {% if type == 'bundles' %}selected{% endif %}>Bundles Only</option>
+                </select>
+                <select name="category">
+                    <option value="">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.name }}" {% if category == cat.name %}selected{% endif %}>{{ cat.item_group_name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="kgs-btn kgs-btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results -->
+    {% if query %}
+    <div class="kgs-search-meta">
+        <span>Found <strong>{{ results | length }}</strong> results</span>
+    </div>
+
+    {% if results %}
+    <div class="kgs-search-results">
+        {% for item in results %}
+        <div class="kgs-search-result-card kgs-glass">
+            <div class="kgs-result-image">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.item_name }}">
+                {% else %}
+                {{ '📦' if item.type == 'bundle' else '📖' }}
+                {% endif %}
+            </div>
+            <div class="kgs-result-info">
+                <div class="kgs-result-badges">
+                    <span class="kgs-type-badge {{ item.type }}">
+                        {{ '📦 BUNDLE' if item.type == 'bundle' else '📖 ITEM' }}
+                    </span>
+                    <span class="kgs-result-code">{{ item.item_code }}</span>
+                </div>
+                <h3>{{ item.item_name }}</h3>
+                {% if item.description %}
+                <p class="kgs-result-desc">{{ item.description | truncate(100) }}</p>
+                {% endif %}
+                {% if item.type == 'bundle' %}
+                <span class="kgs-result-meta">{{ item.item_count }} items in bundle</span>
+                {% else %}
+                <span class="kgs-result-meta {{ 'in-stock' if item.stock > 0 else 'out-of-stock' }}">
+                    {% if item.stock > 0 %}{{ item.stock }} in stock{% else %}Out of Stock{% endif %}
+                </span>
+                {% endif %}
+            </div>
+            <div class="kgs-result-actions">
+                <div class="kgs-result-price">₹{{ item.price | int | format_number }}</div>
+                {% if item.type == 'bundle' %}
+                <a href="/shop/bundles/{{ item.item_code }}" class="kgs-btn kgs-btn-outline kgs-btn-sm">View Bundle</a>
+                {% else %}
+                <button class="kgs-btn kgs-btn-primary kgs-btn-sm kgs-add-item-btn" 
+                        data-item-code="{{ item.item_code }}"
+                        {% if item.stock <= 0 %}disabled{% endif %}>
+                    {% if item.stock > 0 %}+ Add{% else %}Out of Stock{% endif %}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <!-- No Results -->
+    <div class="kgs-no-results kgs-glass">
+        <span>🔍</span>
+        <h3>No results found</h3>
+        <p>We couldn't find any products matching "<strong>{{ query }}</strong>"</p>
+        <p>Try different keywords or browse our categories</p>
+        <a href="/shop/categories" class="kgs-btn kgs-btn-primary">Browse Categories</a>
+    </div>
+    {% endif %}
+    {% else %}
+    <!-- No Query -->
+    <div class="kgs-no-query kgs-glass">
+        <span>🔍</span>
+        <h3>Search our store</h3>
+        <p>Enter a keyword above to search from 25,000+ products</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.kgs-search-header {
+    margin-bottom: 24px;
+}
+
+.kgs-search-header h1 {
+    color: #fff;
+    margin: 0 0 8px 0;
+}
+
+.kgs-search-header p {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.kgs-search-form-container {
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.kgs-search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.kgs-search-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.kgs-search-input-wrapper span {
+    font-size: 20px;
+}
+
+.kgs-search-input-wrapper input {
+    flex: 1;
+    border: none;
+    font-size: 16px;
+}
+
+.kgs-search-input-wrapper input:focus {
+    outline: none;
+}
+
+.kgs-search-filters {
+    display: flex;
+    gap: 12px;
+}
+
+.kgs-search-filters select {
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 14px;
+}
+
+.kgs-search-meta {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 20px;
+}
+
+.kgs-search-results {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.kgs-search-result-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.kgs-result-image {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.kgs-result-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.kgs-result-info {
+    flex: 1;
+}
+
+.kgs-result-badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.kgs-type-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.kgs-type-badge.bundle {
+    background: #f3e8ff;
+    color: #7c3aed;
+}
+
+.kgs-type-badge.item {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.kgs-result-code {
+    font-family: monospace;
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.kgs-result-info h3 {
+    margin: 0 0 6px 0;
+    color: #0f172a;
+    font-size: 16px;
+}
+
+.kgs-result-desc {
+    margin: 0 0 8px 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.kgs-result-meta {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.kgs-result-meta.in-stock {
+    color: #059669;
+}
+
+.kgs-result-meta.out-of-stock {
+    color: #dc2626;
+}
+
+.kgs-result-actions {
+    text-align: right;
+}
+
+.kgs-result-price {
+    font-size: 22px;
+    font-weight: 800;
+    color: #7c3aed;
+    margin-bottom: 12px;
+}
+
+.kgs-no-results,
+.kgs-no-query {
+    text-align: center;
+    padding: 60px;
+}
+
+.kgs-no-results span,
+.kgs-no-query span {
+    font-size: 60px;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.kgs-no-results h3,
+.kgs-no-query h3 {
+    margin: 0 0 8px 0;
+    color: #0f172a;
+}
+
+.kgs-no-results p,
+.kgs-no-query p {
+    margin: 0 0 8px 0;
+    color: #64748b;
+}
+
+@media (max-width: 768px) {
+    .kgs-search-result-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    .kgs-result-actions {
+        text-align: center;
+        width: 100%;
+    }
+    .kgs-search-filters {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

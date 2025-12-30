@@ -1,0 +1,305 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2024-12-23 10:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "hero_section",
+  "hero_image",
+  "hero_title",
+  "hero_subtitle",
+  "column_break_hero",
+  "hero_button_text",
+  "hero_button_link",
+  "sale_banner_text",
+  "sale_banner_active",
+  "contact_section",
+  "store_name",
+  "store_address",
+  "column_break_contact",
+  "phone",
+  "whatsapp",
+  "email",
+  "store_hours",
+  "google_map_embed",
+  "about_section",
+  "company_story",
+  "mission_statement",
+  "column_break_about",
+  "years_in_business",
+  "total_schools_served",
+  "about_image",
+  "social_section",
+  "facebook_url",
+  "instagram_url",
+  "column_break_social",
+  "twitter_url",
+  "youtube_url",
+  "homepage_section",
+  "show_latest_products",
+  "latest_products_count",
+  "column_break_homepage",
+  "show_trending_products",
+  "trending_products_count",
+  "trending_days_range",
+  "footer_section",
+  "footer_about_text",
+  "copyright_text"
+ ],
+ "fields": [
+  {
+   "fieldname": "hero_section",
+   "fieldtype": "Section Break",
+   "label": "Hero Section"
+  },
+  {
+   "fieldname": "hero_image",
+   "fieldtype": "Attach Image",
+   "label": "Hero Background Image"
+  },
+  {
+   "fieldname": "hero_title",
+   "fieldtype": "Data",
+   "label": "Hero Title",
+   "default": "Everything Your Child Needs for School"
+  },
+  {
+   "fieldname": "hero_subtitle",
+   "fieldtype": "Small Text",
+   "label": "Hero Subtitle",
+   "default": "Books, stationery, bags & complete school bundles. Shop from 25,000+ products with fast delivery!"
+  },
+  {
+   "fieldname": "column_break_hero",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hero_button_text",
+   "fieldtype": "Data",
+   "label": "Hero Button Text",
+   "default": "Shop Bundles"
+  },
+  {
+   "fieldname": "hero_button_link",
+   "fieldtype": "Data",
+   "label": "Hero Button Link",
+   "default": "/shop/bundles"
+  },
+  {
+   "fieldname": "sale_banner_text",
+   "fieldtype": "Data",
+   "label": "Sale Banner Text",
+   "default": "🎉 Back to School Sale - 20% OFF"
+  },
+  {
+   "fieldname": "sale_banner_active",
+   "fieldtype": "Check",
+   "label": "Show Sale Banner",
+   "default": 1
+  },
+  {
+   "fieldname": "contact_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "store_name",
+   "fieldtype": "Data",
+   "label": "Store Name",
+   "default": "School Supplies Store"
+  },
+  {
+   "fieldname": "store_address",
+   "fieldtype": "Small Text",
+   "label": "Store Address"
+  },
+  {
+   "fieldname": "column_break_contact",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "whatsapp",
+   "fieldtype": "Data",
+   "label": "WhatsApp Number"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email Address",
+   "options": "Email"
+  },
+  {
+   "fieldname": "store_hours",
+   "fieldtype": "Data",
+   "label": "Store Hours",
+   "default": "Mon-Sat: 9AM - 8PM"
+  },
+  {
+   "fieldname": "google_map_embed",
+   "fieldtype": "Code",
+   "label": "Google Map Embed Code",
+   "options": "HTML"
+  },
+  {
+   "fieldname": "about_section",
+   "fieldtype": "Section Break",
+   "label": "About Us"
+  },
+  {
+   "fieldname": "company_story",
+   "fieldtype": "Text Editor",
+   "label": "Company Story"
+  },
+  {
+   "fieldname": "mission_statement",
+   "fieldtype": "Text Editor",
+   "label": "Mission Statement"
+  },
+  {
+   "fieldname": "column_break_about",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "years_in_business",
+   "fieldtype": "Int",
+   "label": "Years in Business",
+   "default": 10
+  },
+  {
+   "fieldname": "total_schools_served",
+   "fieldtype": "Int",
+   "label": "Total Schools Served",
+   "default": 50
+  },
+  {
+   "fieldname": "about_image",
+   "fieldtype": "Attach Image",
+   "label": "About Section Image"
+  },
+  {
+   "fieldname": "social_section",
+   "fieldtype": "Section Break",
+   "label": "Social Media Links"
+  },
+  {
+   "fieldname": "facebook_url",
+   "fieldtype": "Data",
+   "label": "Facebook URL"
+  },
+  {
+   "fieldname": "instagram_url",
+   "fieldtype": "Data",
+   "label": "Instagram URL"
+  },
+  {
+   "fieldname": "column_break_social",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "twitter_url",
+   "fieldtype": "Data",
+   "label": "Twitter URL"
+  },
+  {
+   "fieldname": "youtube_url",
+   "fieldtype": "Data",
+   "label": "YouTube URL"
+  },
+  {
+   "fieldname": "homepage_section",
+   "fieldtype": "Section Break",
+   "label": "Homepage Settings"
+  },
+  {
+   "fieldname": "show_latest_products",
+   "fieldtype": "Check",
+   "label": "Show Latest Products",
+   "default": 1
+  },
+  {
+   "fieldname": "latest_products_count",
+   "fieldtype": "Int",
+   "label": "Number of Latest Products to Show",
+   "default": 8
+  },
+  {
+   "fieldname": "column_break_homepage",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "show_trending_products",
+   "fieldtype": "Check",
+   "label": "Show Trending Products",
+   "default": 1
+  },
+  {
+   "fieldname": "trending_products_count",
+   "fieldtype": "Int",
+   "label": "Number of Trending Products to Show",
+   "default": 8
+  },
+  {
+   "fieldname": "trending_days_range",
+   "fieldtype": "Int",
+   "label": "Trending Calculation Days Range",
+   "default": 30,
+   "description": "Calculate trending based on sales in last N days"
+  },
+  {
+   "fieldname": "footer_section",
+   "fieldtype": "Section Break",
+   "label": "Footer"
+  },
+  {
+   "fieldname": "footer_about_text",
+   "fieldtype": "Small Text",
+   "label": "Footer About Text",
+   "default": "Your trusted partner for all school supplies. Quality products, competitive prices, and excellent service."
+  },
+  {
+   "fieldname": "copyright_text",
+   "fieldtype": "Data",
+   "label": "Copyright Text",
+   "default": "© 2024 All rights reserved."
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "issingle": 1,
+ "links": [],
+ "modified": "2024-12-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Trustbit Website School",
+ "name": "Trustbit Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Website Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

@@ -1,0 +1,417 @@
+{%- extends "trustbit_website_school/templates/includes/trustbit_base.html" -%}
+
+{%- block title %}Contact Us - {{ settings.store_name or "Trustbit Books & Stationery" }}{% endblock %}
+
+{%- block page_content %}
+<div class="kgs-page-container">
+    <!-- Page Header -->
+    <div class="kgs-page-header">
+        <h1>📞 Contact Us</h1>
+        <p>We'd love to hear from you! Get in touch with us.</p>
+    </div>
+
+    <div class="kgs-contact-grid">
+        <!-- Contact Form -->
+        <div class="kgs-contact-form kgs-glass">
+            <h2>Send us a Message</h2>
+            <form id="contact-form" onsubmit="submitContactForm(event)">
+                <div class="kgs-form-group">
+                    <label for="contact-name">Your Name *</label>
+                    <input type="text" id="contact-name" name="name" required placeholder="Enter your full name">
+                </div>
+                
+                <div class="kgs-form-row">
+                    <div class="kgs-form-group">
+                        <label for="contact-email">Email Address *</label>
+                        <input type="email" id="contact-email" name="email" required placeholder="your@email.com">
+                    </div>
+                    <div class="kgs-form-group">
+                        <label for="contact-phone">Phone Number</label>
+                        <input type="tel" id="contact-phone" name="phone" placeholder="+91 98765 43210">
+                    </div>
+                </div>
+                
+                <div class="kgs-form-group">
+                    <label for="contact-subject">Subject</label>
+                    <select id="contact-subject" name="subject">
+                        <option value="General Enquiry">General Enquiry</option>
+                        <option value="Product Enquiry">Product Enquiry</option>
+                        <option value="Order Issue">Order Issue</option>
+                        <option value="Bulk Order">Bulk Order / School Partnership</option>
+                        <option value="Feedback">Feedback</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="kgs-form-group">
+                    <label for="contact-message">Your Message *</label>
+                    <textarea id="contact-message" name="message" required rows="5" placeholder="How can we help you?"></textarea>
+                </div>
+                
+                <button type="submit" class="kgs-btn kgs-btn-primary kgs-btn-lg" id="submit-btn">
+                    📤 Send Message
+                </button>
+            </form>
+            
+            <div id="form-success" style="display: none;" class="kgs-success-message">
+                <span>✅</span>
+                <div>
+                    <h4>Message Sent Successfully!</h4>
+                    <p>We'll get back to you within 24 hours.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="kgs-contact-info">
+            <!-- Location Card -->
+            <div class="kgs-contact-card kgs-glass">
+                <div class="kgs-contact-card-header">
+                    <span class="kgs-contact-icon">📍</span>
+                    <h3>Store Location</h3>
+                </div>
+                <p>{{ settings.store_address or "123 Main Street, Vijay Nagar, Indore - 452010, Madhya Pradesh" }}</p>
+                {% if settings.google_map_embed %}
+                <div class="kgs-map-container">
+                    {{ settings.google_map_embed | safe }}
+                </div>
+                {% else %}
+                <div class="kgs-map-placeholder">
+                    <span>🗺️</span>
+                    <p>Map coming soon</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Contact Cards -->
+            <div class="kgs-contact-cards-grid">
+                <div class="kgs-contact-mini-card kgs-glass">
+                    <span>📞</span>
+                    <div>
+                        <h4>Phone</h4>
+                        <a href="tel:{{ settings.phone or '+919876543210' }}">{{ settings.phone or "+91 98765 43210" }}</a>
+                    </div>
+                </div>
+                
+                <div class="kgs-contact-mini-card kgs-glass">
+                    <span>💬</span>
+                    <div>
+                        <h4>WhatsApp</h4>
+                        <a href="https://wa.me/{{ (settings.whatsapp or settings.phone or '919876543210') | replace(' ', '') | replace('+', '') }}" target="_blank">
+                            {{ settings.whatsapp or settings.phone or "+91 98765 43210" }}
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="kgs-contact-mini-card kgs-glass">
+                    <span>✉️</span>
+                    <div>
+                        <h4>Email</h4>
+                        <a href="mailto:{{ settings.email or 'info@kgsbooks.com' }}">{{ settings.email or "info@kgsbooks.com" }}</a>
+                    </div>
+                </div>
+                
+                <div class="kgs-contact-mini-card kgs-glass">
+                    <span>⏰</span>
+                    <div>
+                        <h4>Store Hours</h4>
+                        <p>{{ settings.store_hours or "Mon-Sat: 9AM - 8PM" }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            {% if settings.facebook_url or settings.instagram_url or settings.twitter_url %}
+            <div class="kgs-social-card kgs-glass">
+                <h3>Follow Us</h3>
+                <div class="kgs-social-links">
+                    {% if settings.facebook_url %}
+                    <a href="{{ settings.facebook_url }}" target="_blank" class="kgs-social-link facebook">
+                        <span>📘</span> Facebook
+                    </a>
+                    {% endif %}
+                    {% if settings.instagram_url %}
+                    <a href="{{ settings.instagram_url }}" target="_blank" class="kgs-social-link instagram">
+                        <span>📸</span> Instagram
+                    </a>
+                    {% endif %}
+                    {% if settings.twitter_url %}
+                    <a href="{{ settings.twitter_url }}" target="_blank" class="kgs-social-link twitter">
+                        <span>🐦</span> Twitter
+                    </a>
+                    {% endif %}
+                    {% if settings.youtube_url %}
+                    <a href="{{ settings.youtube_url }}" target="_blank" class="kgs-social-link youtube">
+                        <span>📺</span> YouTube
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.kgs-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.kgs-contact-form {
+    padding: 40px;
+}
+
+.kgs-contact-form h2 {
+    margin: 0 0 24px 0;
+    color: #0f172a;
+}
+
+.kgs-form-group {
+    margin-bottom: 20px;
+}
+
+.kgs-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #374151;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.kgs-form-group input,
+.kgs-form-group select,
+.kgs-form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.2s;
+    background: #fff;
+}
+
+.kgs-form-group input:focus,
+.kgs-form-group select:focus,
+.kgs-form-group textarea:focus {
+    outline: none;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+
+.kgs-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.kgs-contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.kgs-contact-card {
+    padding: 24px;
+}
+
+.kgs-contact-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.kgs-contact-icon {
+    font-size: 28px;
+}
+
+.kgs-contact-card h3 {
+    margin: 0;
+    color: #0f172a;
+}
+
+.kgs-contact-card p {
+    color: #475569;
+    margin: 0 0 16px 0;
+    line-height: 1.6;
+}
+
+.kgs-map-container {
+    border-radius: 12px;
+    overflow: hidden;
+    height: 200px;
+}
+
+.kgs-map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.kgs-map-placeholder {
+    height: 150px;
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+}
+
+.kgs-map-placeholder span {
+    font-size: 40px;
+    margin-bottom: 8px;
+}
+
+.kgs-contact-cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.kgs-contact-mini-card {
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.kgs-contact-mini-card span {
+    font-size: 24px;
+}
+
+.kgs-contact-mini-card h4 {
+    margin: 0 0 4px 0;
+    color: #0f172a;
+    font-size: 14px;
+}
+
+.kgs-contact-mini-card a,
+.kgs-contact-mini-card p {
+    margin: 0;
+    color: #7c3aed;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.kgs-contact-mini-card a:hover {
+    text-decoration: underline;
+}
+
+.kgs-social-card {
+    padding: 24px;
+}
+
+.kgs-social-card h3 {
+    margin: 0 0 16px 0;
+    color: #0f172a;
+}
+
+.kgs-social-links {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.kgs-social-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #475569;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.kgs-social-link:hover {
+    background: #7c3aed;
+    color: #fff;
+}
+
+.kgs-success-message {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    background: #ecfdf5;
+    border-radius: 12px;
+    border: 1px solid #a7f3d0;
+}
+
+.kgs-success-message span {
+    font-size: 32px;
+}
+
+.kgs-success-message h4 {
+    margin: 0 0 4px 0;
+    color: #047857;
+}
+
+.kgs-success-message p {
+    margin: 0;
+    color: #059669;
+}
+
+@media (max-width: 992px) {
+    .kgs-contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .kgs-form-row,
+    .kgs-contact-cards-grid {
+        grid-template-columns: 1fr;
+    }
+    .kgs-contact-form {
+        padding: 24px;
+    }
+}
+</style>
+
+<script>
+function submitContactForm(e) {
+    e.preventDefault();
+    
+    var btn = document.getElementById('submit-btn');
+    var form = document.getElementById('contact-form');
+    var success = document.getElementById('form-success');
+    
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Sending...';
+    
+    frappe.call({
+        method: 'trustbit_website_school.api.webshop.submit_contact_form',
+        args: {
+            name: document.getElementById('contact-name').value,
+            email: document.getElementById('contact-email').value,
+            phone: document.getElementById('contact-phone').value,
+            subject: document.getElementById('contact-subject').value,
+            message: document.getElementById('contact-message').value
+        },
+        callback: function(r) {
+            if (r.message && r.message.success) {
+                form.style.display = 'none';
+                success.style.display = 'flex';
+            } else {
+                alert('Failed to send message. Please try again.');
+                btn.disabled = false;
+                btn.innerHTML = '📤 Send Message';
+            }
+        },
+        error: function() {
+            alert('Error sending message. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = '📤 Send Message';
+        }
+    });
+}
+</script>
+{% endblock %}

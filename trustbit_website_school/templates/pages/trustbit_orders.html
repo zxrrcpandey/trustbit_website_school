@@ -1,0 +1,302 @@
+{%- extends "trustbit_website_school/templates/includes/trustbit_base.html" -%}
+
+{%- block title %}My Orders - {{ settings.store_name or "Trustbit Books & Stationery" }}{% endblock %}
+
+{%- block page_content %}
+<div class="kgs-page-container">
+    <!-- Page Header -->
+    <div class="kgs-page-header">
+        <h1>📋 My Orders</h1>
+        <p>View your order history and track shipments</p>
+    </div>
+
+    <!-- Quick Track -->
+    <div class="kgs-quick-track kgs-glass">
+        <h3>🔍 Quick Order Tracking</h3>
+        <p>Don't have an account? Track your order using the Order ID</p>
+        <form action="/shop/track-order" method="GET" class="kgs-track-form">
+            <input type="text" name="order_id" placeholder="Enter Order ID (e.g., SAL-ORD-2024-00001)" required>
+            <button type="submit" class="kgs-btn kgs-btn-primary">Track Order</button>
+        </form>
+    </div>
+
+    {% if frappe.session.user != 'Guest' %}
+    <!-- Orders List -->
+    {% if orders %}
+    <div class="kgs-orders-list">
+        {% for order in orders %}
+        <div class="kgs-order-card kgs-glass">
+            <div class="kgs-order-header">
+                <div class="kgs-order-info">
+                    <span class="kgs-order-id">{{ order.name }}</span>
+                    <span class="kgs-order-date">{{ order.transaction_date | frappe_format_date }}</span>
+                </div>
+                <div class="kgs-order-status {{ order.status | lower | replace(' ', '-') }}">
+                    {% if order.status == 'Completed' or order.delivery_status == 'Fully Delivered' %}
+                    ✅ Delivered
+                    {% elif order.delivery_status == 'Partially Delivered' %}
+                    🚚 Partially Shipped
+                    {% elif order.status == 'To Deliver and Bill' or order.status == 'To Deliver' %}
+                    🚚 Shipped
+                    {% elif order.status == 'To Bill' %}
+                    📦 Processing
+                    {% elif order.status == 'Cancelled' %}
+                    ❌ Cancelled
+                    {% else %}
+                    ⏳ {{ order.status }}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="kgs-order-body">
+                <div class="kgs-order-details">
+                    <div class="kgs-order-detail">
+                        <span class="kgs-detail-label">Items</span>
+                        <span class="kgs-detail-value">{{ order.items_count }} items</span>
+                    </div>
+                    <div class="kgs-order-detail">
+                        <span class="kgs-detail-label">Total</span>
+                        <span class="kgs-detail-value kgs-order-total">₹{{ order.grand_total | int | format_number }}</span>
+                    </div>
+                    {% if order.bundle %}
+                    <div class="kgs-order-detail">
+                        <span class="kgs-detail-label">Bundle</span>
+                        <span class="kgs-detail-value kgs-bundle-name">📦 {{ order.bundle }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="kgs-order-actions">
+                <a href="/shop/track-order?order_id={{ order.name }}" class="kgs-btn kgs-btn-outline kgs-btn-sm">
+                    📍 Track Order
+                </a>
+                {% if order.status == 'Completed' or order.delivery_status == 'Fully Delivered' %}
+                <button class="kgs-btn kgs-btn-primary kgs-btn-sm kgs-reorder-btn" data-order="{{ order.name }}">
+                    🔄 Reorder
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if total_pages > 1 %}
+    <div class="kgs-pagination">
+        {% if page > 1 %}
+        <a href="?page={{ page - 1 }}" class="kgs-btn kgs-btn-outline">← Previous</a>
+        {% endif %}
+        <span class="kgs-page-info">Page {{ page }} of {{ total_pages }}</span>
+        {% if page < total_pages %}
+        <a href="?page={{ page + 1 }}" class="kgs-btn kgs-btn-outline">Next →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <!-- No Orders -->
+    <div class="kgs-empty-state kgs-glass">
+        <span>📦</span>
+        <h3>No orders yet</h3>
+        <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
+        <a href="/shop/bundles" class="kgs-btn kgs-btn-primary">Start Shopping</a>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <!-- Login Required -->
+    <div class="kgs-login-required kgs-glass">
+        <span>🔐</span>
+        <h3>Login Required</h3>
+        <p>Please login to view your order history</p>
+        <a href="/login?redirect-to=/shop/orders" class="kgs-btn kgs-btn-primary">Login</a>
+        <p class="kgs-login-note">Or use the quick track feature above with your Order ID</p>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.kgs-quick-track {
+    padding: 30px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.kgs-quick-track h3 {
+    margin: 0 0 8px 0;
+    color: #0f172a;
+}
+
+.kgs-quick-track p {
+    margin: 0 0 20px 0;
+    color: #64748b;
+}
+
+.kgs-track-form {
+    display: flex;
+    gap: 12px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.kgs-track-form input {
+    flex: 1;
+    padding: 14px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+}
+
+.kgs-track-form input:focus {
+    outline: none;
+    border-color: #7c3aed;
+}
+
+.kgs-orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.kgs-order-card {
+    padding: 24px;
+}
+
+.kgs-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.kgs-order-id {
+    font-family: monospace;
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 16px;
+}
+
+.kgs-order-date {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.kgs-order-status {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.kgs-order-status.completed,
+.kgs-order-status.closed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.kgs-order-status.to-deliver-and-bill,
+.kgs-order-status.to-deliver {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.kgs-order-status.to-bill,
+.kgs-order-status.draft {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.kgs-order-status.cancelled {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.kgs-order-body {
+    margin-bottom: 20px;
+}
+
+.kgs-order-details {
+    display: flex;
+    gap: 40px;
+}
+
+.kgs-order-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.kgs-detail-label {
+    font-size: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.kgs-detail-value {
+    font-size: 15px;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.kgs-order-total {
+    font-size: 18px;
+    color: #7c3aed;
+}
+
+.kgs-bundle-name {
+    color: #059669;
+}
+
+.kgs-order-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.kgs-login-required {
+    text-align: center;
+    padding: 60px 40px;
+}
+
+.kgs-login-required span {
+    font-size: 60px;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.kgs-login-required h3 {
+    margin: 0 0 8px 0;
+    color: #0f172a;
+}
+
+.kgs-login-required p {
+    margin: 0 0 24px 0;
+    color: #64748b;
+}
+
+.kgs-login-note {
+    margin-top: 16px !important;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .kgs-track-form {
+        flex-direction: column;
+    }
+    .kgs-order-details {
+        flex-direction: column;
+        gap: 16px;
+    }
+    .kgs-order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+}
+</style>
+{% endblock %}

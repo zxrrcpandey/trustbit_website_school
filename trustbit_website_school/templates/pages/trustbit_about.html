@@ -1,0 +1,374 @@
+{%- extends "trustbit_website_school/templates/includes/trustbit_base.html" -%}
+
+{%- block title %}About Us - {{ settings.store_name or "Trustbit Books & Stationery" }}{% endblock %}
+
+{%- block page_content %}
+<div class="kgs-page-container">
+    <!-- Hero Section -->
+    <div class="kgs-about-hero kgs-glass">
+        <div class="kgs-about-hero-content">
+            <div class="kgs-about-logo">
+                {% if settings.about_image %}
+                <img src="{{ settings.about_image }}" alt="{{ settings.store_name }}">
+                {% else %}
+                <div class="kgs-about-logo-icon">📚</div>
+                {% endif %}
+            </div>
+            <div class="kgs-about-intro">
+                <span class="kgs-about-badge">Est. {{ (2024 - (settings.years_in_business or 29)) }}</span>
+                <h1>{{ settings.store_name or "Trustbit Books & Stationery" }}</h1>
+                <p>Your trusted partner for all school supplies</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="kgs-stats-grid">
+        <div class="kgs-stat-card kgs-glass">
+            <span class="kgs-stat-icon">📅</span>
+            <div class="kgs-stat-value">{{ settings.years_in_business or 29 }}+</div>
+            <div class="kgs-stat-label">Years of Service</div>
+        </div>
+        <div class="kgs-stat-card kgs-glass">
+            <span class="kgs-stat-icon">📦</span>
+            <div class="kgs-stat-value">25,000+</div>
+            <div class="kgs-stat-label">Products</div>
+        </div>
+        <div class="kgs-stat-card kgs-glass">
+            <span class="kgs-stat-icon">🏫</span>
+            <div class="kgs-stat-value">{{ settings.total_schools_served or 50 }}+</div>
+            <div class="kgs-stat-label">Schools Served</div>
+        </div>
+        <div class="kgs-stat-card kgs-glass">
+            <span class="kgs-stat-icon">👨‍👩‍👧‍👦</span>
+            <div class="kgs-stat-value">10,000+</div>
+            <div class="kgs-stat-label">Happy Families</div>
+        </div>
+    </div>
+
+    <!-- Story Section -->
+    <div class="kgs-about-section">
+        <div class="kgs-about-content kgs-glass">
+            <h2>📖 Our Story</h2>
+            {% if settings.company_story %}
+            <div class="kgs-story-content">{{ settings.company_story }}</div>
+            {% else %}
+            <p>Founded in 1995, Trustbit Books & Stationery began as a small neighborhood shop with a simple mission: to make quality educational supplies accessible to every family.</p>
+            <p>Over the years, we've grown from a single store to become one of the region's most trusted names in school supplies. What started as a passion project has blossomed into a comprehensive educational resource center, serving thousands of students and families every year.</p>
+            <p>Our founder, Mr. Kishore Gupta, believed that every child deserves access to quality educational materials. This belief continues to guide us today as we work tirelessly to bring you the best products at the most competitive prices.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="kgs-about-section">
+        <div class="kgs-mission-card kgs-glass">
+            <h2>🎯 Our Mission</h2>
+            {% if settings.mission_statement %}
+            <div class="kgs-mission-content">{{ settings.mission_statement }}</div>
+            {% else %}
+            <div class="kgs-mission-points">
+                <div class="kgs-mission-point">
+                    <span>✓</span>
+                    <p>Provide quality educational supplies at affordable prices</p>
+                </div>
+                <div class="kgs-mission-point">
+                    <span>✓</span>
+                    <p>Support schools with customized bundle solutions</p>
+                </div>
+                <div class="kgs-mission-point">
+                    <span>✓</span>
+                    <p>Offer exceptional customer service and guidance</p>
+                </div>
+                <div class="kgs-mission-point">
+                    <span>✓</span>
+                    <p>Build lasting relationships with families and institutions</p>
+                </div>
+                <div class="kgs-mission-point">
+                    <span>✓</span>
+                    <p>Continuously expand our product range to meet evolving needs</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Team Section -->
+    {% if team_members %}
+    <div class="kgs-about-section">
+        <h2 class="kgs-section-title-white">👥 Meet Our Team</h2>
+        <div class="kgs-team-grid">
+            {% for member in team_members %}
+            <div class="kgs-team-card kgs-glass">
+                <div class="kgs-team-photo">
+                    {% if member.photo %}
+                    <img src="{{ member.photo }}" alt="{{ member.member_name }}">
+                    {% else %}
+                    <span>👤</span>
+                    {% endif %}
+                </div>
+                <h4>{{ member.member_name }}</h4>
+                <span class="kgs-team-role">{{ member.role }}</span>
+                {% if member.bio %}
+                <p class="kgs-team-bio">{{ member.bio }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- CTA Section -->
+    <div class="kgs-about-cta kgs-glass">
+        <h2>Ready to Shop?</h2>
+        <p>Explore our wide range of products and find everything you need for school</p>
+        <div class="kgs-cta-buttons">
+            <a href="/shop/bundles" class="kgs-btn kgs-btn-secondary">📦 Shop Bundles</a>
+            <a href="/shop/categories" class="kgs-btn kgs-btn-outline">Browse Categories</a>
+            <a href="/shop/contact" class="kgs-btn kgs-btn-white">Contact Us</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.kgs-about-hero {
+    padding: 50px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.kgs-about-hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.kgs-about-logo-icon {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    box-shadow: 0 10px 40px rgba(245, 158, 11, 0.3);
+}
+
+.kgs-about-logo img {
+    width: 120px;
+    height: 120px;
+    border-radius: 30px;
+    object-fit: cover;
+}
+
+.kgs-about-badge {
+    background: #7c3aed;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.kgs-about-intro h1 {
+    margin: 12px 0 8px 0;
+    color: #0f172a;
+    font-size: 32px;
+}
+
+.kgs-about-intro p {
+    margin: 0;
+    color: #64748b;
+    font-size: 16px;
+}
+
+.kgs-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.kgs-stat-card {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.kgs-stat-icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.kgs-stat-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: #7c3aed;
+}
+
+.kgs-stat-label {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.kgs-about-section {
+    margin-bottom: 40px;
+}
+
+.kgs-about-content {
+    padding: 40px;
+}
+
+.kgs-about-content h2 {
+    color: #0f172a;
+    margin: 0 0 20px 0;
+    font-size: 24px;
+}
+
+.kgs-about-content p,
+.kgs-story-content {
+    color: #475569;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+.kgs-about-content p + p {
+    margin-top: 16px;
+}
+
+.kgs-mission-card {
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(168, 85, 247, 0.05)), rgba(255,255,255,0.9);
+}
+
+.kgs-mission-card h2 {
+    color: #0f172a;
+    margin: 0 0 24px 0;
+}
+
+.kgs-mission-points {
+    display: grid;
+    gap: 16px;
+}
+
+.kgs-mission-point {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.kgs-mission-point span {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.kgs-mission-point p {
+    margin: 0;
+    color: #475569;
+    font-size: 15px;
+}
+
+.kgs-section-title-white {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 24px;
+}
+
+.kgs-team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.kgs-team-card {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.kgs-team-photo {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    overflow: hidden;
+}
+
+.kgs-team-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.kgs-team-card h4 {
+    margin: 0 0 4px 0;
+    color: #0f172a;
+}
+
+.kgs-team-role {
+    color: #7c3aed;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.kgs-team-bio {
+    margin: 12px 0 0 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.kgs-about-cta {
+    text-align: center;
+    padding: 50px;
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(168, 85, 247, 0.05)), rgba(255,255,255,0.95);
+}
+
+.kgs-about-cta h2 {
+    margin: 0 0 8px 0;
+    color: #0f172a;
+}
+
+.kgs-about-cta p {
+    margin: 0 0 24px 0;
+    color: #64748b;
+}
+
+.kgs-cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 992px) {
+    .kgs-stats-grid, .kgs-team-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .kgs-stats-grid, .kgs-team-grid {
+        grid-template-columns: 1fr;
+    }
+    .kgs-about-hero, .kgs-about-content, .kgs-mission-card, .kgs-about-cta {
+        padding: 30px 20px;
+    }
+}
+</style>
+{% endblock %}
