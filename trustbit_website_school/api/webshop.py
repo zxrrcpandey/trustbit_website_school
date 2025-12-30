@@ -39,22 +39,20 @@ def get_categories():
     item_groups = frappe.get_all(
         "Item Group",
         filters={
-            "show_in_website": 1,
             "is_group": 0
         },
         fields=["name", "item_group_name", "image", "route", "trustbit_icon", "trustbit_color"],
         order_by="name asc"
     )
-    
+
     for group in item_groups:
         group["count"] = frappe.db.count("Item", {
             "item_group": group["name"],
-            "show_in_website": 1,
             "disabled": 0
         })
         group["icon"] = group.get("trustbit_icon") or "📦"
         group["color"] = group.get("trustbit_color") or "#7c3aed"
-    
+
     return item_groups
 
 
@@ -64,7 +62,6 @@ def get_latest_products(limit=8):
     items = frappe.get_all(
         "Item",
         filters={
-            "show_in_website": 1,
             "disabled": 0,
             "is_sales_item": 1
         },
@@ -91,7 +88,7 @@ def get_trending_products(limit=8, days=30):
     from_date = add_days(today(), -cint(days))
     
     trending = frappe.db.sql("""
-        SELECT 
+        SELECT
             sii.item_code,
             SUM(sii.qty) as total_qty
         FROM `tabSales Invoice Item` sii
@@ -99,9 +96,8 @@ def get_trending_products(limit=8, days=30):
         WHERE si.docstatus = 1
             AND si.posting_date >= %s
             AND EXISTS (
-                SELECT 1 FROM `tabItem` i 
-                WHERE i.item_code = sii.item_code 
-                AND i.show_in_website = 1 
+                SELECT 1 FROM `tabItem` i
+                WHERE i.item_code = sii.item_code
                 AND i.disabled = 0
             )
         GROUP BY sii.item_code
@@ -136,9 +132,9 @@ def get_active_banners():
 def get_store_stats():
     """Get store statistics"""
     return {
-        "total_products": frappe.db.count("Item", {"show_in_website": 1, "disabled": 0}),
+        "total_products": frappe.db.count("Item", {"disabled": 0, "is_sales_item": 1}),
         "total_bundles": frappe.db.count("Product Bundle"),
-        "total_categories": frappe.db.count("Item Group", {"show_in_website": 1, "is_group": 0}),
+        "total_categories": frappe.db.count("Item Group", {"is_group": 0}),
     }
 
 
@@ -171,8 +167,8 @@ def search_items(query, filters=None, limit=10):
     """
     
     base_filters = """
-        show_in_website = 1
-        AND disabled = 0
+        disabled = 0
+        AND is_sales_item = 1
     """
     
     additional_filters = ""
@@ -451,7 +447,6 @@ def get_category_products(category, limit=20, page=1, sort_by="item_name"):
         "Item",
         filters={
             "item_group": category,
-            "show_in_website": 1,
             "disabled": 0
         },
         fields=[
@@ -462,15 +457,14 @@ def get_category_products(category, limit=20, page=1, sort_by="item_name"):
         limit_page_length=cint(limit),
         limit_start=offset
     )
-    
+
     for item in items:
         item["price"] = get_item_price(item["item_code"])
         item["stock"] = get_item_stock(item["item_code"])
         item["image"] = item.get("website_image") or item.get("image")
-    
+
     total = frappe.db.count("Item", {
         "item_group": category,
-        "show_in_website": 1,
         "disabled": 0
     })
     
