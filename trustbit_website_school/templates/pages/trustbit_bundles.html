@@ -87,7 +87,7 @@
                 <h3>{{ bundle.item_name }}</h3>
                 <p>{{ bundle.description | truncate(100) if bundle.description else "Complete book set for this class" }}</p>
                 
-                {% set out_of_stock_count = bundle.items | selectattr('stock', 'le', 0) | list | length %}
+                {% set out_of_stock_count = bundle['items'] | selectattr('stock', 'le', 0) | list | length %}
                 {% if out_of_stock_count > 0 %}
                 <div class="kgs-warning-banner">
                     ⚠️ {{ out_of_stock_count }} item(s) currently out of stock
