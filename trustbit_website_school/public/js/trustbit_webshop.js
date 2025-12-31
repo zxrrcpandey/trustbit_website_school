@@ -309,18 +309,30 @@ const TrustbitWebshop = {
     },
 
     loadCart() {
-        // Load cart from Webshop
+        // Load cart from Webshop - silently fail for guests
         frappe.call({
             method: 'webshop.webshop.shopping_cart.cart.get_cart_quotation',
             callback: (r) => {
                 if (r.message && r.message.doc) {
                     this.updateCartUI(r.message.doc.items || []);
                 }
+            },
+            error: () => {
+                // Silently ignore errors for guest users
             }
         });
     },
 
     async addBundleToCart(itemCode) {
+        // Check if user is logged in
+        if (frappe.session.user === 'Guest') {
+            this.showNotification('🔐 Please login to add items to cart', 'warning');
+            setTimeout(() => {
+                window.location.href = '/login?redirect-to=' + encodeURIComponent(window.location.pathname);
+            }, 1500);
+            return;
+        }
+
         this.showNotification('⏳ Adding bundle items...', 'info');
 
         try {
@@ -331,7 +343,7 @@ const TrustbitWebshop = {
 
             const result = response.message;
 
-            if (result.success) {
+            if (result && result.success) {
                 this.showNotification(
                     `✅ ${result.message}`,
                     result.skipped.length > 0 ? 'warning' : 'success'
@@ -342,11 +354,24 @@ const TrustbitWebshop = {
             }
         } catch (error) {
             console.error('Add bundle error:', error);
-            this.showNotification('❌ Error adding bundle to cart', 'error');
+            if (error.message && error.message.includes('Not permitted')) {
+                this.showNotification('🔐 Please login to add items to cart', 'warning');
+            } else {
+                this.showNotification('❌ Error adding bundle to cart', 'error');
+            }
         }
     },
 
     async addItemToCart(itemCode) {
+        // Check if user is logged in
+        if (frappe.session.user === 'Guest') {
+            this.showNotification('🔐 Please login to add items to cart', 'warning');
+            setTimeout(() => {
+                window.location.href = '/login?redirect-to=' + encodeURIComponent(window.location.pathname);
+            }, 1500);
+            return;
+        }
+
         try {
             await frappe.call({
                 method: 'webshop.webshop.shopping_cart.cart.add_to_cart',
@@ -357,7 +382,11 @@ const TrustbitWebshop = {
             this.loadCart();
         } catch (error) {
             console.error('Add item error:', error);
-            this.showNotification('❌ Error adding item to cart', 'error');
+            if (error.message && error.message.includes('Not permitted')) {
+                this.showNotification('🔐 Please login to add items to cart', 'warning');
+            } else {
+                this.showNotification('❌ Error adding item to cart', 'error');
+            }
         }
     },
 
