@@ -24,45 +24,45 @@
             </div>
         </div>
         
-        <div class="kgs-hero-card kgs-glass kgs-hero-image-only">
+        <div class="kgs-hero-card kgs-glass" style="display: flex; align-items: center; justify-content: center; padding: 30px; min-height: 320px;">
             {% if settings.hero_image %}
-            <img src="{{ settings.hero_image }}" alt="{{ settings.store_name or 'School Supplies' }}">
+            <img src="{{ settings.hero_image }}" alt="{{ settings.store_name or 'School Supplies' }}" style="max-width: 100%; max-height: 280px; object-fit: contain; border-radius: 16px;">
             {% else %}
-            <div class="kgs-hero-icon">📚</div>
+            <div style="font-size: 140px; line-height: 1;">📚</div>
             {% endif %}
         </div>
     </div>
 </section>
 
 <!-- Stats Bar -->
-<section class="kgs-stats-bar">
-    <div class="kgs-stats-container">
-        <div class="kgs-stat-item">
-            <span class="kgs-stat-icon">📦</span>
-            <div class="kgs-stat-content">
-                <strong>{{ stats.total_products | default("25,000+") }}</strong>
-                <span>Products Available</span>
+<section style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 28px 40px; margin: -30px auto 0 auto; position: relative; z-index: 10; border-radius: 24px; max-width: 1100px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 38px;">📦</span>
+            <div style="display: flex; flex-direction: column;">
+                <strong style="font-size: 26px; font-weight: 800; color: #7c3aed; line-height: 1.2;">{{ stats.total_products | default("25,000+") }}</strong>
+                <span style="font-size: 13px; color: #64748b; font-weight: 600;">Products Available</span>
             </div>
         </div>
-        <div class="kgs-stat-item">
-            <span class="kgs-stat-icon">🎒</span>
-            <div class="kgs-stat-content">
-                <strong>{{ stats.total_bundles | default("150+") }}</strong>
-                <span>School Bundles</span>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 38px;">🎒</span>
+            <div style="display: flex; flex-direction: column;">
+                <strong style="font-size: 26px; font-weight: 800; color: #7c3aed; line-height: 1.2;">{{ stats.total_bundles | default("150+") }}</strong>
+                <span style="font-size: 13px; color: #64748b; font-weight: 600;">School Bundles</span>
             </div>
         </div>
-        <div class="kgs-stat-item">
-            <span class="kgs-stat-icon">🏫</span>
-            <div class="kgs-stat-content">
-                <strong>{{ settings.total_schools_served | default("50+") }}</strong>
-                <span>Schools Covered</span>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 38px;">🏫</span>
+            <div style="display: flex; flex-direction: column;">
+                <strong style="font-size: 26px; font-weight: 800; color: #7c3aed; line-height: 1.2;">{{ settings.total_schools_served | default("50+") }}</strong>
+                <span style="font-size: 13px; color: #64748b; font-weight: 600;">Schools Covered</span>
             </div>
         </div>
-        <div class="kgs-stat-item">
-            <span class="kgs-stat-icon">👨‍👩‍👧‍👦</span>
-            <div class="kgs-stat-content">
-                <strong>10K+</strong>
-                <span>Happy Parents</span>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="font-size: 38px;">👨‍👩‍👧‍👦</span>
+            <div style="display: flex; flex-direction: column;">
+                <strong style="font-size: 26px; font-weight: 800; color: #7c3aed; line-height: 1.2;">10K+</strong>
+                <span style="font-size: 13px; color: #64748b; font-weight: 600;">Happy Parents</span>
             </div>
         </div>
     </div>
