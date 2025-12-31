@@ -24,29 +24,45 @@
             </div>
         </div>
         
-        <div class="kgs-hero-card kgs-glass">
+        <div class="kgs-hero-card kgs-glass kgs-hero-image-only">
             {% if settings.hero_image %}
-            <img src="{{ settings.hero_image }}" alt="Trustbit Books">
+            <img src="{{ settings.hero_image }}" alt="{{ settings.store_name or 'School Supplies' }}">
             {% else %}
             <div class="kgs-hero-icon">📚</div>
             {% endif %}
-            <div class="kgs-hero-stats">
-                <div class="kgs-hero-stat-main">{{ stats.total_products | default("25,000+") }}</div>
-                <div class="kgs-hero-stat-label">Products Available</div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Bar -->
+<section class="kgs-stats-bar">
+    <div class="kgs-stats-container">
+        <div class="kgs-stat-item">
+            <span class="kgs-stat-icon">📦</span>
+            <div class="kgs-stat-content">
+                <strong>{{ stats.total_products | default("25,000+") }}</strong>
+                <span>Products Available</span>
             </div>
-            <div class="kgs-hero-mini-stats">
-                <div>
-                    <strong>{{ stats.total_bundles | default("150+") }}</strong>
-                    <span>School Bundles</span>
-                </div>
-                <div>
-                    <strong>{{ settings.total_schools_served | default("50+") }}</strong>
-                    <span>Schools Covered</span>
-                </div>
-                <div>
-                    <strong>10K+</strong>
-                    <span>Happy Parents</span>
-                </div>
+        </div>
+        <div class="kgs-stat-item">
+            <span class="kgs-stat-icon">🎒</span>
+            <div class="kgs-stat-content">
+                <strong>{{ stats.total_bundles | default("150+") }}</strong>
+                <span>School Bundles</span>
+            </div>
+        </div>
+        <div class="kgs-stat-item">
+            <span class="kgs-stat-icon">🏫</span>
+            <div class="kgs-stat-content">
+                <strong>{{ settings.total_schools_served | default("50+") }}</strong>
+                <span>Schools Covered</span>
+            </div>
+        </div>
+        <div class="kgs-stat-item">
+            <span class="kgs-stat-icon">👨‍👩‍👧‍👦</span>
+            <div class="kgs-stat-content">
+                <strong>10K+</strong>
+                <span>Happy Parents</span>
             </div>
         </div>
     </div>
