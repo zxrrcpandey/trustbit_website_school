@@ -1,5 +1,6 @@
 import frappe
 from webshop.webshop.shopping_cart.cart import get_cart_quotation
+from trustbit_website_school.api.webshop import get_categories
 
 no_cache = 1
 
@@ -10,6 +11,7 @@ def get_context(context):
     context.no_cache = 1
     context.active_page = "cart"
     context.settings = settings
+    context.categories = get_categories()
 
     # Get cart data from webshop
     try:
