@@ -91,9 +91,7 @@
 <div class="kgs-webshop">
     {% block page_content %}{% endblock %}
 </div>
-{% endblock %}
-
-{%- block footer %}
+<!-- Custom Footer inside content block to ensure proper placement -->
 <footer class="kgs-footer kgs-glass-dark">
     <div class="kgs-footer-grid" style="max-width: 1400px; margin: 0 auto;">
         <div>
@@ -129,6 +127,10 @@
         {{ settings.copyright_text or "© 2024 All rights reserved." }} | Powered by ERPNext
     </div>
 </footer>
+{% endblock %}
+
+{%- block footer %}
+<!-- Empty footer block to prevent default Frappe footer -->
 {% endblock %}
 
 {%- block script %}
