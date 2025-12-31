@@ -5,7 +5,7 @@ with open("requirements.txt") as f:
 
 setup(
     name="trustbit_website_school",
-    version="1.0.0",
+    version="1.1.0",
     description="Trustbit Website School - Custom Webshop for School Supplies",
     author="Trustbit",
     author_email="info@trustbit.com",
