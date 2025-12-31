@@ -309,7 +309,10 @@ const TrustbitWebshop = {
     },
 
     loadCart() {
-        // Load cart from Webshop - silently fail for guests
+        // Only load cart for logged in users
+        if (!frappe.session.user || frappe.session.user === 'Guest') {
+            return;
+        }
         frappe.call({
             method: 'webshop.webshop.shopping_cart.cart.get_cart_quotation',
             callback: (r) => {
@@ -318,7 +321,7 @@ const TrustbitWebshop = {
                 }
             },
             error: () => {
-                // Silently ignore errors for guest users
+                // Silently ignore errors
             }
         });
     },
