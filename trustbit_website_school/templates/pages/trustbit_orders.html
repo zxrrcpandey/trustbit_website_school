@@ -29,7 +29,7 @@
             <div class="kgs-order-header">
                 <div class="kgs-order-info">
                     <span class="kgs-order-id">{{ order.name }}</span>
-                    <span class="kgs-order-date">{{ order.transaction_date | frappe_format_date }}</span>
+                    <span class="kgs-order-date">{{ order.transaction_date }}</span>
                 </div>
                 <div class="kgs-order-status {{ order.status | lower | replace(' ', '-') }}">
                     {% if order.status == 'Completed' or order.delivery_status == 'Fully Delivered' %}
@@ -56,7 +56,7 @@
                     </div>
                     <div class="kgs-order-detail">
                         <span class="kgs-detail-label">Total</span>
-                        <span class="kgs-detail-value kgs-order-total">₹{{ order.grand_total | int | format_number }}</span>
+                        <span class="kgs-detail-value kgs-order-total">₹{{ order.grand_total | int }}</span>
                     </div>
                     {% if order.bundle %}
                     <div class="kgs-order-detail">
