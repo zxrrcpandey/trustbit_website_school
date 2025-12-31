@@ -67,18 +67,17 @@ def get_latest_products(limit=8):
         },
         fields=[
             "item_code", "item_name", "item_group", "image",
-            "website_image", "description", "stock_uom"
+            "description", "stock_uom"
         ],
         order_by="creation desc",
         limit_page_length=cint(limit)
     )
-    
+
     for item in items:
         item["price"] = get_item_price(item["item_code"])
         item["stock"] = get_item_stock(item["item_code"])
-        item["image"] = item.get("website_image") or item.get("image")
         item["tag"] = "New Arrival"
-    
+
     return items
 
 
@@ -112,12 +111,12 @@ def get_trending_products(limit=8, days=30):
             "item_code": item.item_code,
             "item_name": item.item_name,
             "item_group": item.item_group,
-            "image": item.website_image or item.image,
+            "image": item.image,
             "price": get_item_price(item.item_code),
             "stock": get_item_stock(item.item_code),
             "sales": int(t["total_qty"])
         })
-    
+
     return items
 
 
@@ -180,15 +179,15 @@ def search_items(query, filters=None, limit=10):
         additional_filters += f" AND trustbit_class = %(class)s"
     
     items = frappe.db.sql(f"""
-        SELECT 
-            item_code, item_name, item_group, image, website_image,
+        SELECT
+            item_code, item_name, item_group, image,
             description, stock_uom, barcode
         FROM `tabItem`
         WHERE {base_filters}
             AND {search_conditions}
             {additional_filters}
-        ORDER BY 
-            CASE 
+        ORDER BY
+            CASE
                 WHEN item_code = %(exact)s THEN 1
                 WHEN item_code LIKE %(starts)s THEN 2
                 WHEN item_name LIKE %(starts)s THEN 3
@@ -205,11 +204,10 @@ def search_items(query, filters=None, limit=10):
         "class": filters.get("class"),
         "limit": limit
     }, as_dict=True)
-    
+
     for item in items:
         item["price"] = get_item_price(item["item_code"])
         item["stock"] = get_item_stock(item["item_code"])
-        item["image"] = item.get("website_image") or item.get("image")
         item["type"] = "item"
     
     if not filters.get("type") or filters.get("type") == "bundles":
@@ -222,12 +220,11 @@ def search_items(query, filters=None, limit=10):
 def search_bundles(query, limit=5):
     """Search product bundles"""
     bundles = frappe.db.sql("""
-        SELECT 
+        SELECT
             pb.name as item_code,
             pb.new_item_code,
             i.item_name,
             i.image,
-            i.website_image,
             i.description
         FROM `tabProduct Bundle` pb
         INNER JOIN `tabItem` i ON i.item_code = pb.new_item_code
@@ -241,14 +238,13 @@ def search_bundles(query, limit=5):
         "search": f"%{query}%",
         "limit": limit
     }, as_dict=True)
-    
+
     for bundle in bundles:
         bundle["item_code"] = bundle["new_item_code"]
         bundle["type"] = "bundle"
-        bundle["image"] = bundle.get("website_image") or bundle.get("image")
         bundle["price"] = get_bundle_price(bundle["item_code"])
         bundle["item_count"] = frappe.db.count("Product Bundle Item", {"parent": bundle["item_code"]})
-    
+
     return bundles
 
 
@@ -262,13 +258,12 @@ def get_bundles(limit=20, page=1):
     offset = (cint(page) - 1) * cint(limit)
     
     bundles = frappe.db.sql("""
-        SELECT 
+        SELECT
             pb.name,
             pb.new_item_code as item_code,
             i.item_name,
             i.item_group,
             i.image,
-            i.website_image,
             i.description,
             i.trustbit_school as school,
             i.trustbit_class as class
@@ -278,9 +273,8 @@ def get_bundles(limit=20, page=1):
         ORDER BY i.item_name ASC
         LIMIT %(limit)s OFFSET %(offset)s
     """, {"limit": cint(limit), "offset": offset}, as_dict=True)
-    
+
     for bundle in bundles:
-        bundle["image"] = bundle.get("website_image") or bundle.get("image")
         bundle["items"] = get_bundle_items(bundle["item_code"])
         bundle["price"] = sum(item["amount"] for item in bundle["items"])
         bundle["item_count"] = len(bundle["items"])
@@ -305,12 +299,12 @@ def get_bundle_detail(item_code):
     
     item = frappe.get_doc("Item", item_code)
     bundle_items = get_bundle_items(item_code)
-    
+
     return {
         "item_code": item_code,
         "item_name": item.item_name,
         "description": item.description,
-        "image": item.website_image or item.image,
+        "image": item.image,
         "school": item.get("trustbit_school"),
         "class": item.get("trustbit_class"),
         "items": bundle_items,
@@ -344,7 +338,7 @@ def get_bundle_items(item_code):
             "rate": price,
             "amount": price * bi["qty"],
             "stock": stock,
-            "image": item.website_image or item.image,
+            "image": item.image,
             "in_stock": stock >= bi["qty"]
         })
     
@@ -450,7 +444,7 @@ def get_category_products(category, limit=20, page=1, sort_by="item_name"):
             "disabled": 0
         },
         fields=[
-            "item_code", "item_name", "image", "website_image",
+            "item_code", "item_name", "image",
             "description", "stock_uom"
         ],
         order_by=sort_by,
@@ -461,7 +455,6 @@ def get_category_products(category, limit=20, page=1, sort_by="item_name"):
     for item in items:
         item["price"] = get_item_price(item["item_code"])
         item["stock"] = get_item_stock(item["item_code"])
-        item["image"] = item.get("website_image") or item.get("image")
 
     total = frappe.db.count("Item", {
         "item_group": category,
