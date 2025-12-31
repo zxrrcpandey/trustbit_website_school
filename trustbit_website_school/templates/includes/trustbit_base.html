@@ -3,9 +3,23 @@
 {%- block head_include %}
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-    .main-section { max-width: 100% !important; padding: 0 !important; }
-    .page-content-wrapper { max-width: 100% !important; }
-    body { background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #c084fc 65%, #e879f9 100%) !important; background-attachment: fixed !important; }
+    /* CRITICAL: Force body flexbox layout for correct element ordering */
+    html, body { min-height: 100vh !important; }
+    body {
+        display: flex !important;
+        flex-direction: column !important;
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 35%, #c084fc 65%, #e879f9 100%) !important;
+        background-attachment: fixed !important;
+    }
+
+    /* Override any Frappe container styles */
+    .main-section { max-width: 100% !important; padding: 0 !important; display: contents !important; }
+    .page-content-wrapper { max-width: 100% !important; display: contents !important; }
+
+    /* Force correct element ordering with flexbox */
+    .kgs-header { order: 1 !important; flex-shrink: 0 !important; }
+    .kgs-webshop { order: 2 !important; flex: 1 0 auto !important; }
+    .kgs-footer { order: 3 !important; flex-shrink: 0 !important; margin-top: auto !important; }
 
     /* Page Layout */
     .kgs-page-container { max-width: 1400px; margin: 0 auto; padding: 40px; }
