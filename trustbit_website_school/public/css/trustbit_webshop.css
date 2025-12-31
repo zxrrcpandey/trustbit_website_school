@@ -1437,6 +1437,262 @@
 }
 
 /* ================================
+   MODAL STYLES
+   ================================ */
+
+.kgs-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.kgs-modal {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.kgs-modal-header {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  padding: 24px 28px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.kgs-modal-header small {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.85;
+  margin-bottom: 8px;
+}
+
+.kgs-modal-header h2 {
+  margin: 0 0 4px 0;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.kgs-modal-header p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.kgs-modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.kgs-modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.kgs-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kgs-modal-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.kgs-modal-item:hover {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.kgs-modal-item.out-of-stock {
+  background: #fef2f2;
+  border-color: #fecaca;
+  opacity: 0.8;
+}
+
+.kgs-modal-item-image {
+  width: 48px;
+  height: 48px;
+  background: #fff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  border: 1px solid #e2e8f0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.kgs-modal-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kgs-modal-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.kgs-modal-item-name {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 14px;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.kgs-modal-item-meta {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.kgs-modal-item-meta .in-stock {
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.kgs-modal-item-meta .no-stock {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.kgs-modal-item-price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+
+.kgs-modal-footer {
+  padding: 20px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.kgs-modal-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  border-radius: 14px;
+  color: #fff;
+}
+
+.kgs-modal-total span {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.kgs-modal-total strong {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.kgs-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.kgs-modal-actions .kgs-btn {
+  flex: 1;
+  justify-content: center;
+  padding: 14px 20px;
+}
+
+@media (max-width: 640px) {
+  .kgs-modal {
+    max-height: 90vh;
+    border-radius: 20px 20px 0 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: none;
+  }
+
+  .kgs-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .kgs-modal-header h2 {
+    font-size: 18px;
+  }
+
+  .kgs-modal-actions {
+    flex-direction: column;
+  }
+}
+
+/* ================================
    RESPONSIVE
    ================================ */
 
