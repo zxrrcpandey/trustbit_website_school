@@ -96,7 +96,7 @@
                 
                 <div class="kgs-price-box">
                     <div class="kgs-price-label">Total Bundle Value</div>
-                    <div class="kgs-price-value">₹{{ bundle.price | int | format_number }}</div>
+                    <div class="kgs-price-value">₹{{ "{:,.0f}".format(bundle.price | float) }}</div>
                 </div>
                 
                 <div class="kgs-bundle-actions">
