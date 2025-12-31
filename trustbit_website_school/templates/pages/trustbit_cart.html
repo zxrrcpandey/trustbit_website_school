@@ -1,0 +1,426 @@
+{%- extends "trustbit_website_school/templates/includes/trustbit_base.html" -%}
+
+{%- block title %}Shopping Cart - {{ settings.store_name or "Trustbit Books & Stationery" }}{% endblock %}
+
+{%- block page_content %}
+<div class="kgs-page-container">
+    <!-- Page Header -->
+    <div class="kgs-page-header">
+        <h1>🛒 Shopping Cart</h1>
+        <p>Review your items before checkout</p>
+    </div>
+
+    {% if cart_error %}
+    <div class="kgs-error-banner kgs-glass">
+        <span>⚠️</span>
+        <div>
+            <strong>Unable to load cart</strong>
+            <p>Please try refreshing the page or contact support if the issue persists.</p>
+        </div>
+    </div>
+    {% elif cart_items and cart_items | length > 0 %}
+
+    <div class="kgs-cart-layout">
+        <!-- Cart Items -->
+        <div class="kgs-cart-items">
+            {% for item in cart_items %}
+            <div class="kgs-cart-item kgs-glass" data-item-code="{{ item.item_code }}">
+                <div class="kgs-cart-item-image">
+                    {% if item.image %}
+                    <img src="{{ item.image }}" alt="{{ item.item_name }}">
+                    {% else %}
+                    <span>📦</span>
+                    {% endif %}
+                </div>
+
+                <div class="kgs-cart-item-details">
+                    <h4>{{ item.item_name }}</h4>
+                    {% if item.item_code %}
+                    <span class="kgs-item-code">{{ item.item_code }}</span>
+                    {% endif %}
+                    <div class="kgs-item-price">₹{{ item.rate | int }} each</div>
+                </div>
+
+                <div class="kgs-cart-item-qty">
+                    <button class="kgs-qty-btn kgs-qty-minus" data-item-code="{{ item.item_code }}">-</button>
+                    <input type="number" value="{{ item.qty | int }}" min="0" class="kgs-qty-input" data-item-code="{{ item.item_code }}">
+                    <button class="kgs-qty-btn kgs-qty-plus" data-item-code="{{ item.item_code }}">+</button>
+                </div>
+
+                <div class="kgs-cart-item-total">
+                    <span class="kgs-item-total-label">Subtotal</span>
+                    <span class="kgs-item-total-value">₹{{ item.amount | int }}</span>
+                </div>
+
+                <button class="kgs-cart-item-remove" data-item-code="{{ item.item_code }}" title="Remove item">
+                    ✕
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="kgs-cart-summary kgs-glass">
+            <h3>Order Summary</h3>
+
+            <div class="kgs-summary-row">
+                <span>Items ({{ cart_count }})</span>
+                <span>₹{{ net_total | int }}</span>
+            </div>
+
+            {% if taxes_total > 0 %}
+            <div class="kgs-summary-row">
+                <span>Taxes & Charges</span>
+                <span>₹{{ taxes_total | int }}</span>
+            </div>
+            {% endif %}
+
+            <div class="kgs-summary-row kgs-summary-total">
+                <span>Total</span>
+                <span>₹{{ cart_total | int }}</span>
+            </div>
+
+            <div class="kgs-cart-actions">
+                <a href="/shop/bundles" class="kgs-btn kgs-btn-outline">
+                    ← Continue Shopping
+                </a>
+                <a href="/checkout" class="kgs-btn kgs-btn-primary kgs-checkout-btn">
+                    Proceed to Checkout →
+                </a>
+            </div>
+
+            <div class="kgs-secure-checkout">
+                <span>🔒</span> Secure checkout with multiple payment options
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Empty Cart -->
+    <div class="kgs-empty-state kgs-glass">
+        <span>🛒</span>
+        <h3>Your cart is empty</h3>
+        <p>Add some products to your cart to get started!</p>
+        <a href="/shop/bundles" class="kgs-btn kgs-btn-primary">Browse Bundles</a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.kgs-error-banner {
+    display: flex;
+    gap: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+}
+
+.kgs-error-banner > span {
+    font-size: 24px;
+}
+
+.kgs-error-banner strong {
+    color: #dc2626;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.kgs-error-banner p {
+    color: #991b1b;
+    margin: 0;
+    font-size: 14px;
+}
+
+.kgs-cart-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 30px;
+    align-items: start;
+}
+
+.kgs-cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.kgs-cart-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto auto auto;
+    gap: 20px;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+}
+
+.kgs-cart-item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.kgs-cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.kgs-cart-item-image span {
+    font-size: 32px;
+}
+
+.kgs-cart-item-details h4 {
+    margin: 0 0 4px 0;
+    color: #0f172a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.kgs-item-code {
+    font-size: 12px;
+    color: #94a3b8;
+    font-family: monospace;
+}
+
+.kgs-item-price {
+    color: #64748b;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.kgs-cart-item-qty {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.kgs-qty-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: all 0.2s;
+}
+
+.kgs-qty-btn:hover {
+    background: #7c3aed;
+    color: #fff;
+    border-color: #7c3aed;
+}
+
+.kgs-qty-input {
+    width: 50px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.kgs-qty-input:focus {
+    outline: none;
+    border-color: #7c3aed;
+}
+
+.kgs-cart-item-total {
+    text-align: right;
+    min-width: 100px;
+}
+
+.kgs-item-total-label {
+    display: block;
+    font-size: 11px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.kgs-item-total-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #7c3aed;
+}
+
+.kgs-cart-item-remove {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #fee2e2;
+    border-radius: 8px;
+    color: #dc2626;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.kgs-cart-item-remove:hover {
+    background: #dc2626;
+    color: #fff;
+}
+
+.kgs-cart-summary {
+    padding: 30px;
+    position: sticky;
+    top: 20px;
+}
+
+.kgs-cart-summary h3 {
+    margin: 0 0 24px 0;
+    color: #0f172a;
+    font-size: 20px;
+    font-weight: 700;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.kgs-summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    color: #64748b;
+    font-size: 15px;
+}
+
+.kgs-summary-total {
+    border-top: 2px solid #f1f5f9;
+    margin-top: 12px;
+    padding-top: 16px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.kgs-summary-total span:last-child {
+    color: #7c3aed;
+    font-size: 24px;
+}
+
+.kgs-cart-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.kgs-checkout-btn {
+    text-align: center;
+    font-size: 16px;
+    padding: 16px 24px;
+}
+
+.kgs-secure-checkout {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.kgs-secure-checkout span {
+    color: #059669;
+}
+
+@media (max-width: 992px) {
+    .kgs-cart-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .kgs-cart-summary {
+        position: static;
+    }
+}
+
+@media (max-width: 768px) {
+    .kgs-cart-item {
+        grid-template-columns: 60px 1fr;
+        gap: 12px;
+    }
+
+    .kgs-cart-item-image {
+        width: 60px;
+        height: 60px;
+    }
+
+    .kgs-cart-item-qty {
+        grid-column: 1 / -1;
+        justify-content: flex-start;
+    }
+
+    .kgs-cart-item-total {
+        grid-column: 1 / -1;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .kgs-cart-item-remove {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+    }
+}
+</style>
+
+<script>
+frappe.ready(function() {
+    // Update quantity
+    function updateCartItem(itemCode, qty) {
+        frappe.call({
+            method: 'webshop.webshop.shopping_cart.cart.update_cart',
+            args: {
+                item_code: itemCode,
+                qty: qty
+            },
+            callback: function(r) {
+                if (!r.exc) {
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
+    // Plus button
+    $('.kgs-qty-plus').click(function() {
+        var itemCode = $(this).data('item-code');
+        var input = $(this).siblings('.kgs-qty-input');
+        var qty = parseInt(input.val()) + 1;
+        updateCartItem(itemCode, qty);
+    });
+
+    // Minus button
+    $('.kgs-qty-minus').click(function() {
+        var itemCode = $(this).data('item-code');
+        var input = $(this).siblings('.kgs-qty-input');
+        var qty = Math.max(0, parseInt(input.val()) - 1);
+        updateCartItem(itemCode, qty);
+    });
+
+    // Input change
+    $('.kgs-qty-input').change(function() {
+        var itemCode = $(this).data('item-code');
+        var qty = Math.max(0, parseInt($(this).val()) || 0);
+        updateCartItem(itemCode, qty);
+    });
+
+    // Remove button
+    $('.kgs-cart-item-remove').click(function() {
+        var itemCode = $(this).data('item-code');
+        updateCartItem(itemCode, 0);
+    });
+});
+</script>
+{% endblock %}

@@ -63,4 +63,5 @@ website_route_rules = [
     {"from_route": "/shop/announcements", "to_route": "trustbit_announcements"},
     {"from_route": "/shop/orders", "to_route": "trustbit_orders"},
     {"from_route": "/shop/track-order", "to_route": "trustbit_track_order"},
+    {"from_route": "/shop/cart", "to_route": "trustbit_cart"},
 ]
