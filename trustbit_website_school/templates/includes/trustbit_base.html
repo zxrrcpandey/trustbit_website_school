@@ -54,6 +54,11 @@
 {% endblock %}
 
 {%- block navbar %}
+<!-- Empty navbar block - using custom header in content -->
+{% endblock %}
+
+{%- block content %}
+<!-- Custom Header -->
 <header class="kgs-header kgs-glass-dark">
     <div class="kgs-header-inner" style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto;">
         <a href="/shop" class="kgs-logo">
@@ -85,13 +90,13 @@
         <a href="/cart" class="kgs-cart-btn">🛒 Cart <span class="kgs-cart-count" id="kgs-cart-count" style="display: none;">0</span></a>
     </div>
 </header>
-{% endblock %}
 
-{%- block content %}
+<!-- Main Content -->
 <div class="kgs-webshop">
     {% block page_content %}{% endblock %}
 </div>
-<!-- Custom Footer inside content block to ensure proper placement -->
+
+<!-- Custom Footer -->
 <footer class="kgs-footer kgs-glass-dark">
     <div class="kgs-footer-grid" style="max-width: 1400px; margin: 0 auto;">
         <div>
